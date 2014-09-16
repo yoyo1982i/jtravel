@@ -9,4 +9,21 @@
 
 # Make sure your secret_key_base is kept private
 # if you're sharing your code publicly.
-Jtravel::Application.config.secret_key_base = 'e42c9f3f0635ffbcab9b902391d773195bafd5038e9805df19a28f42f41ad2c55f75ea7d157e4215474389521d4c2d57e94e2226d69d06ecd2e265cedfe7b73f'
+#Jtravel::Application.config.secret_key_base = 'e42c9f3f0635ffbcab9b902391d773195bafd5038e9805df19a28f42f41ad2c55f75ea7d157e4215474389521d4c2d57e94e2226d69d06ecd2e265cedfe7b73f'
+
+require 'securerandom'
+
+def secure_token
+  token_file = Rails.root.join('.secret')
+  if File.exist?(token_file)
+    # Use the existing token.
+    File.read(token_file).chomp
+  else
+    # Generate a new token and store it in token_file.
+    token = SecureRandom.hex(64)
+    File.write(token_file, token)
+    token
+  end
+end
+
+Jtravel::Application.config.secret_key_base = secure_token
